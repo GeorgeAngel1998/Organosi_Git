@@ -4,16 +4,15 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity DATAPATH is
   Port ( Datapath_Clk : in STD_LOGIC;
          Datapath_Reset : in STD_LOGIC;
-         PC_sel : in  STD_LOGIC;
          PC_LdEn : in  STD_LOGIC;
-         RF_WrEn : in STD_LOGIC;
-         RF_WrData_sel : in  STD_LOGIC;
-         RF_B_sel : in  STD_LOGIC;
-         cloud_enable : in STD_LOGIC_VECTOR(1 downto 0);
+--         RF_WrEn : in STD_LOGIC;
+--         RF_WrData_sel : in  STD_LOGIC;
+--         RF_B_sel : in  STD_LOGIC;
+--         cloud_enable : in STD_LOGIC_VECTOR(1 downto 0);
          ALU_func : in STD_LOGIC_VECTOR(3 downto 0);
          ALU_Bin_sel : in STD_LOGIC;       
          Mem_WrEn : in STD_LOGIC;
-         Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
+--         Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
        
        -- Testomg Outputs
        
@@ -91,11 +90,13 @@ signal RF_A_signal : std_logic_vector(31 downto 0);
 signal RF_B_signal : std_logic_vector(31 downto 0);
 signal Immed_signal : std_logic_vector(31 downto 0);
 
+signal SIGNAL_PC_SEL : STD_LOGIC := '0';
+
 begin
 
 IFS : IFSTAGE PORT MAP(
       PC_Immed => Immed_signal,
-      PC_sel => PC_sel,
+      PC_sel => SIGNAL_PC_SEL,
       PC_LdEn => PC_LdEn,
       Reset => Datapath_Reset,
       Clk => Datapath_Clk,
@@ -105,18 +106,17 @@ IFS : IFSTAGE PORT MAP(
 
 DECS : DEC_STAGE PORT MAP (
     Clk => Datapath_Clk,
-   -- Instr => Instr_signal,
-    Instr => Instruction_BYPASS_IF,  --SSSSSS
---    RF_WrEn => RF_WrEn,              --SSSSSS           
+    Instr => Instr_signal,  --SSSSSS
+        
     ALU_out => ALU_out_signal,
     MEM_out => MEM_Dataout_signal,
---    RF_WrData_sel => RF_WrData_sel,  --SSSSSS
---    RF_B_sel => RF_B_sel,            --SSSSSSS
---    cloud_enable => cloud_enable,    --SSSSSS
+
     Reset => Datapath_Reset,         --SSSSSS
     Immed => Immed_signal,           --SSSSSS 
     RF_A => RF_A_signal,
-    RF_B => RF_B_signal   
+    RF_B => RF_B_signal,
+    
+    DEC_PC_SEL => SIGNAL_PC_SEL
 );
 
 EXECS : EX_STAGE PORT MAP (
@@ -136,8 +136,8 @@ MEMS : MEM_STAGE PORT MAP (
    MEM_DataOut => MEM_Dataout_signal
 );
 
-TEST_INSTR   <= Instruction_BYPASS_IF;
---TEST_INSTR   <= Instr_signal;
+--TEST_INSTR   <= Instruction_BYPASS_IF;
+TEST_INSTR   <= Instr_signal;
 TEST_IMMED   <= Immed_signal;
 TEST_RFA     <= RF_A_signal;
 TEST_RFB     <= RF_B_signal;

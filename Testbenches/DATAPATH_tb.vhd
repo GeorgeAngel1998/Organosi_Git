@@ -11,16 +11,15 @@ ARCHITECTURE behavior OF DATAPATH_tb IS
 COMPONENT DATAPATH is
   Port ( Datapath_Clk : in STD_LOGIC;
          Datapath_Reset : in STD_LOGIC;
-         PC_sel : in  STD_LOGIC;
          PC_LdEn : in  STD_LOGIC;
-         RF_WrEn : in STD_LOGIC;
-         RF_WrData_sel : in  STD_LOGIC;
-         RF_B_sel : in  STD_LOGIC;
-         cloud_enable : in STD_LOGIC_VECTOR(1 downto 0);
+--         RF_WrEn : in STD_LOGIC;
+--         RF_WrData_sel : in  STD_LOGIC;
+--         RF_B_sel : in  STD_LOGIC;
+--         cloud_enable : in STD_LOGIC_VECTOR(1 downto 0);
          ALU_func : in STD_LOGIC_VECTOR(3 downto 0);
          ALU_Bin_sel : in STD_LOGIC;       
          Mem_WrEn : in STD_LOGIC;
-         Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
+--         Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
        
        -- Testomg Outputs
        
@@ -64,13 +63,13 @@ BEGIN
    uut: DATAPATH PORT MAP (
           Datapath_Clk => Datapath_Clk,
           Datapath_Reset => Datapath_Reset,
-          Instruction_BYPASS_IF => Instruction_BYPASS_IF,
-          PC_sel => PC_sel,
+--          Instruction_BYPASS_IF => Instruction_BYPASS_IF,
+--          PC_sel => PC_sel,
           PC_LdEn => PC_LdEn,
-          RF_WrEn => RF_WrEn,
-          RF_WrData_sel => RF_WrData_sel,
-          RF_B_sel => RF_B_sel,
-          cloud_enable => cloud_enable,       
+--          RF_WrEn => RF_WrEn,
+--          RF_WrData_sel => RF_WrData_sel,
+--          RF_B_sel => RF_B_sel,
+--          cloud_enable => cloud_enable,       
           ALU_Bin_sel => ALU_Bin_sel,
           ALU_func => ALU_func,       
           Mem_WrEn => Mem_WrEn,

@@ -46,7 +46,7 @@ component Adder IS
         adderOut : out  STD_LOGIC_VECTOR (31 downto 0));
 end component;
 
-component dist_mem_gen_0 IS
+component dist_mem_gen_2 IS
   PORT (
     a : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
     spo : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
@@ -78,8 +78,8 @@ begin
         sel => PC_sel,
         output => MUX_output_signal);
         
-    IMEM1: dist_mem_gen_0 port map (
-       a => register_out_signal(9 downto 0), -- change to 11 downto 2
+    IMEM1: dist_mem_gen_2 port map (
+       a => register_out_signal(11 downto 2), -- change to 11 downto 2
        spo => memory_out_signal
        );
     
