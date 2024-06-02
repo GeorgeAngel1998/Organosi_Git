@@ -36,23 +36,26 @@ component IFSTAGE is
        Reset        : in  STD_LOGIC;
        Clk          : in  STD_LOGIC;
        Instr        : out  STD_LOGIC_VECTOR (31 downto 0)
-       );
+   );
 end component;
 
 component DEC_STAGE is
     Port ( Clk : in  STD_LOGIC;
            Instr : in  STD_LOGIC_VECTOR (31 downto 0);
-           RF_WrEn : in  STD_LOGIC;
            ALU_out : in  STD_LOGIC_VECTOR (31 downto 0);
            MEM_out : in  STD_LOGIC_VECTOR (31 downto 0);
-           RF_WrData_sel : in  STD_LOGIC;
-           RF_B_sel : in  STD_LOGIC;
-           cloud_enable : in  STD_LOGIC_VECTOR(1 downto 0);
            Reset : in STD_LOGIC;
            Immed : out  STD_LOGIC_VECTOR (31 downto 0);
            RF_A : out  STD_LOGIC_VECTOR (31 downto 0);
-           RF_B : out  STD_LOGIC_VECTOR (31 downto 0)
-           );
+           RF_B : out  STD_LOGIC_VECTOR (31 downto 0);
+           
+           DEC_PC_SEL : out STD_LOGIC;      
+           
+           --Testing Outputs
+           TEST_Ard1_out : out STD_LOGIC_VECTOR(4 downto 0);
+           TEST_Ard2_out : out STD_LOGIC_VECTOR(4 downto 0);
+           TEST_Awr_out : out STD_LOGIC_VECTOR(4 downto 0)
+       );
 end component;
 
 component EX_STAGE is
@@ -104,12 +107,12 @@ DECS : DEC_STAGE PORT MAP (
     Clk => Datapath_Clk,
    -- Instr => Instr_signal,
     Instr => Instruction_BYPASS_IF,  --SSSSSS
-    RF_WrEn => RF_WrEn,              --SSSSSS           
+--    RF_WrEn => RF_WrEn,              --SSSSSS           
     ALU_out => ALU_out_signal,
     MEM_out => MEM_Dataout_signal,
-    RF_WrData_sel => RF_WrData_sel,  --SSSSSS
-    RF_B_sel => RF_B_sel,            --SSSSSSS
-    cloud_enable => cloud_enable,    --SSSSSS
+--    RF_WrData_sel => RF_WrData_sel,  --SSSSSS
+--    RF_B_sel => RF_B_sel,            --SSSSSSS
+--    cloud_enable => cloud_enable,    --SSSSSS
     Reset => Datapath_Reset,         --SSSSSS
     Immed => Immed_signal,           --SSSSSS 
     RF_A => RF_A_signal,

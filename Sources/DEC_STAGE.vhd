@@ -108,81 +108,81 @@ RF_B <= RF_B_signal;
 
 process(Instr)
 begin
-if(Instr(31 downto 30) =  "10") then
-    SIGNAL_IMMED <= '0';
-    cloud_enable <= "00";
-    SIGNAL_PC_SEL <= '0';
-    SIGNAL_RF_WrEn <= '1';
-    SIGNAL_RF_B_sel <= '0';                                 -- Write from ALU    
-else
-    SIGNAL_IMMED <= '1';
-    SIGNAL_RF_B_sel <= '0';
-    
-    if(Instr(31 downto 26) =  "111000") then                -- li
-        cloud_enable <= "01";
-        SIGNAL_PC_SEL <= '0';
-        SIGNAL_RF_WrEn <= '1';
-        SIGNAL_RF_B_sel <= '-';                     -- dont care
-    elsif(Instr(31 downto 26) =  "111001") then             -- lui
+    if(Instr(31 downto 30) =  "10") then
+        SIGNAL_IMMED <= '0';
         cloud_enable <= "00";
         SIGNAL_PC_SEL <= '0';
         SIGNAL_RF_WrEn <= '1';
-        SIGNAL_RF_B_sel <= '-';                     -- dont care
-    elsif(Instr(31 downto 26) =  "110000") then             -- addi
-        cloud_enable <= "01";
-        SIGNAL_PC_SEL <= '0';
-        SIGNAL_RF_WrEn <= '1';
-        SIGNAL_RF_B_sel <= '-';                     -- dont care
-    elsif(Instr(31 downto 26) =  "110010") then             --andi
-        cloud_enable <= "00";
-        SIGNAL_PC_SEL <= '0';
-        SIGNAL_RF_WrEn <= '1'; 
-        SIGNAL_RF_B_sel <= '-';                     -- dont care     
-    elsif(Instr(31 downto 26) =  "110011") then             -- ori
-        cloud_enable <= "00";
-        SIGNAL_PC_SEL <= '0';
-        SIGNAL_RF_WrEn <= '1';
-        SIGNAL_RF_B_sel <= '-';                     -- dont care
-    elsif(Instr(31 downto 26) =  "111111") then             -- B
-        cloud_enable <= "11";
-        SIGNAL_PC_SEL <= '0';
-        SIGNAL_RF_WrEn <= '0';
-        SIGNAL_RF_B_sel <= '-';                    -- dont care
-    elsif(Instr(31 downto 26) =  "010000") then             -- beq
-        if(RF_A_signal = RF_B_signal) then
-            cloud_enable <= "11";
-            SIGNAL_PC_SEL <= '1';
-        else
-            SIGNAL_PC_SEL <= '0';
-        end if;
-        SIGNAL_RF_WrEn <= '0';
-        SIGNAL_RF_B_sel <= '-';                    -- dont care
-    elsif(Instr(31 downto 26) =  "010001") then             -- bne
-        if(RF_A_signal = RF_B_signal) then
-            SIGNAL_PC_SEL <= '0';
-        else
-            cloud_enable <= "11";
-            SIGNAL_PC_SEL <= '1';
-        end if;    
-        SIGNAL_RF_WrEn <= '0';
-        SIGNAL_RF_B_sel <= '-';                    -- dont care
-    elsif(Instr(31 downto 26) =  "000011") then             -- Lb
-        SIGNAL_RF_WrEn <= '1';     
-        cloud_enable <= "01";
-        SIGNAL_PC_SEL <= '0';
-        SIGNAL_RF_B_sel <= '0';                    -- Write from ALU
-    elsif(Instr(31 downto 26) =  "001111") then             -- Lw
-        SIGNAL_RF_WrEn <= '1';     
-        cloud_enable <= "01";
-        SIGNAL_PC_SEL <= '0';
-        SIGNAL_RF_B_sel <= '1';                    -- Write from MEM
+        SIGNAL_RF_B_sel <= '0';                                 -- Write from ALU    
     else
-        SIGNAL_RF_WrEn <= '1';     
-        cloud_enable <= "01";                               -- Sb or Sw
-        SIGNAL_PC_SEL <= '0';
-        SIGNAL_RF_B_sel <= '-';                    -- dont care @TODO ???
-    end if;
-end if;   
+        SIGNAL_IMMED <= '1';
+        SIGNAL_RF_B_sel <= '0';
+        
+        if(Instr(31 downto 26) =  "111000") then                -- li
+            cloud_enable <= "01";
+            SIGNAL_PC_SEL <= '0';
+            SIGNAL_RF_WrEn <= '1';
+            SIGNAL_RF_B_sel <= '-';                     -- dont care
+        elsif(Instr(31 downto 26) =  "111001") then             -- lui
+            cloud_enable <= "00";
+            SIGNAL_PC_SEL <= '0';
+            SIGNAL_RF_WrEn <= '1';
+            SIGNAL_RF_B_sel <= '-';                     -- dont care
+        elsif(Instr(31 downto 26) =  "110000") then             -- addi
+            cloud_enable <= "01";
+            SIGNAL_PC_SEL <= '0';
+            SIGNAL_RF_WrEn <= '1';
+            SIGNAL_RF_B_sel <= '-';                     -- dont care
+        elsif(Instr(31 downto 26) =  "110010") then             --andi
+            cloud_enable <= "00";
+            SIGNAL_PC_SEL <= '0';
+            SIGNAL_RF_WrEn <= '1'; 
+            SIGNAL_RF_B_sel <= '-';                     -- dont care     
+        elsif(Instr(31 downto 26) =  "110011") then             -- ori
+            cloud_enable <= "00";
+            SIGNAL_PC_SEL <= '0';
+            SIGNAL_RF_WrEn <= '1';
+            SIGNAL_RF_B_sel <= '-';                     -- dont care
+        elsif(Instr(31 downto 26) =  "111111") then             -- B
+            cloud_enable <= "11";
+            SIGNAL_PC_SEL <= '0';
+            SIGNAL_RF_WrEn <= '0';
+            SIGNAL_RF_B_sel <= '-';                    -- dont care
+        elsif(Instr(31 downto 26) =  "010000") then             -- beq
+            if(RF_A_signal = RF_B_signal) then
+                cloud_enable <= "11";
+                SIGNAL_PC_SEL <= '1';
+            else
+                SIGNAL_PC_SEL <= '0';
+            end if;
+            SIGNAL_RF_WrEn <= '0';
+            SIGNAL_RF_B_sel <= '-';                    -- dont care
+        elsif(Instr(31 downto 26) =  "010001") then             -- bne
+            if(RF_A_signal = RF_B_signal) then
+                SIGNAL_PC_SEL <= '0';
+            else
+                cloud_enable <= "11";
+                SIGNAL_PC_SEL <= '1';
+            end if;    
+            SIGNAL_RF_WrEn <= '0';
+            SIGNAL_RF_B_sel <= '-';                    -- dont care
+        elsif(Instr(31 downto 26) =  "000011") then             -- Lb
+            SIGNAL_RF_WrEn <= '1';     
+            cloud_enable <= "01";
+            SIGNAL_PC_SEL <= '0';
+            SIGNAL_RF_B_sel <= '0';                    -- Write from ALU
+        elsif(Instr(31 downto 26) =  "001111") then             -- Lw
+            SIGNAL_RF_WrEn <= '1';     
+            cloud_enable <= "01";
+            SIGNAL_PC_SEL <= '0';
+            SIGNAL_RF_B_sel <= '1';                    -- Write from MEM
+        else
+            SIGNAL_RF_WrEn <= '1';     
+            cloud_enable <= "01";                               -- Sb or Sw
+            SIGNAL_PC_SEL <= '0';
+            SIGNAL_RF_B_sel <= '-';                    -- dont care @TODO ???
+        end if;
+    end if;   
            
 end process;    
 
