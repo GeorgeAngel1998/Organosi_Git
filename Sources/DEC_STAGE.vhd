@@ -15,14 +15,16 @@ entity DEC_STAGE is
            Reset : in STD_LOGIC;
            Immed : out  STD_LOGIC_VECTOR (31 downto 0);
            RF_A : out  STD_LOGIC_VECTOR (31 downto 0);
-           RF_B : out  STD_LOGIC_VECTOR (31 downto 0);
+           RF_B : out  STD_LOGIC_VECTOR (31 downto 0);     
+           
+           DEC_IMMED : out STD_LOGIC;
+           DEC_PC_SEL : out STD_LOGIC;      
            
            --Testing Outputs
            TEST_Ard1_out : out STD_LOGIC_VECTOR(4 downto 0);
            TEST_Ard2_out : out STD_LOGIC_VECTOR(4 downto 0);
            TEST_Awr_out : out STD_LOGIC_VECTOR(4 downto 0)
-           
-           );
+       );
 end DEC_STAGE;
 
 architecture Behavioral of DEC_STAGE is
@@ -100,5 +102,20 @@ TEST_Awr_out <= Instr(20 downto 16);
 Immed <= Immed_signal;
 RF_A <= RF_A_signal;
 RF_B <= RF_B_signal;
+
+process(Instr)
+begin
+    if(Instr(31 downto 26) =  "111111" or Instr(31 downto 25) =  "01000") then
+        DEC_PC_SEL <= '1';
+    else
+        DEC_PC_SEL <= '0';
+    end if;
+    
+    if(Instr(31 downto 30) =  "10") then
+        DEC_IMMED <= '0';
+    else
+        DEC_IMMED <= '1';
+    end if;          
+end process;    
 
 end Behavioral;
