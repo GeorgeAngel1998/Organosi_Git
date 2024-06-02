@@ -10,8 +10,8 @@ entity DEC_STAGE is
            ALU_out : in  STD_LOGIC_VECTOR (31 downto 0);
            MEM_out : in  STD_LOGIC_VECTOR (31 downto 0);
            RF_WrData_sel : in  STD_LOGIC;
-           RF_B_sel : in  STD_LOGIC;
-           cloud_enable : in  STD_LOGIC_VECTOR (1 downto 0);
+--           RF_B_sel : in  STD_LOGIC;
+--           cloud_enable : in  STD_LOGIC_VECTOR (1 downto 0);
            Reset : in STD_LOGIC;
            Immed : out  STD_LOGIC_VECTOR (31 downto 0);
            RF_A : out  STD_LOGIC_VECTOR (31 downto 0);
@@ -28,6 +28,9 @@ entity DEC_STAGE is
 end DEC_STAGE;
 
 architecture Behavioral of DEC_STAGE is
+
+SIGNAL cloud_enable : STD_LOGIC_VECTOR (1 downto 0);
+SIGNAL RF_B_sel : STD_LOGIC;
 
 component Register_File is
 	Port ( Ard1 : in  STD_LOGIC_VECTOR (4 downto 0);
@@ -105,17 +108,42 @@ RF_B <= RF_B_signal;
 
 process(Instr)
 begin
-    if(Instr(31 downto 26) =  "111111" or Instr(31 downto 25) =  "01000") then
-        DEC_PC_SEL <= '1';
+if(Instr(31 downto 30) =  "10") then
+    DEC_IMMED <= '0';
+    cloud_enable <= "00";
+else
+    DEC_IMMED <= '1';
+    if(Instr(31 downto 26) =  "111000") then                -- li
+        cloud_enable <= "01";
+    elsif(Instr(31 downto 26) =  "111001") then             -- lui
+        cloud_enable <= "00";
+    elsif(Instr(31 downto 26) =  "110000") then             -- addi
+        cloud_enable <= "01";
+    elsif(Instr(31 downto 26) =  "110010") then             --andi
+        cloud_enable <= "00";      
+    elsif(Instr(31 downto 26) =  "110011") then             -- ori
+        cloud_enable <= "00";
+    elsif(Instr(31 downto 26) =  "111111") then             -- B
+        cloud_enable <= "11";
+    elsif(Instr(31 downto 26) =  "010000") then             -- beq
+        if(RF_A_signal = RF_B_signal) then
+            cloud_enable <= "11";
+            DEC_PC_SEL <= '1';
+        else
+            DEC_PC_SEL <= '0';
+        end if;
+    elsif(Instr(31 downto 26) =  "010001") then             -- bne
+        if(RF_A_signal = RF_B_signal) then
+            DEC_PC_SEL <= '0';
+        else
+            cloud_enable <= "11";
+            DEC_PC_SEL <= '1';
+        end if;    
     else
-        DEC_PC_SEL <= '0';
+        cloud_enable <= "01";                               -- Lb | Sb | Lw | Sw
     end if;
-    
-    if(Instr(31 downto 30) =  "10") then
-        DEC_IMMED <= '0';
-    else
-        DEC_IMMED <= '1';
-    end if;          
+end if;   
+           
 end process;    
 
 end Behavioral;
