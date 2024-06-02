@@ -30,7 +30,8 @@ end DEC_STAGE;
 architecture Behavioral of DEC_STAGE is
 
 SIGNAL cloud_enable : STD_LOGIC_VECTOR (1 downto 0);
-SIGNAL RF_B_sel : STD_LOGIC;
+SIGNAL SIGNAL_IMMED : STD_LOGIC := '0';
+SIGNAL SIGNAL_PC_SEL : STD_LOGIC := '0';
 
 component Register_File is
 	Port ( Ard1 : in  STD_LOGIC_VECTOR (4 downto 0);
@@ -71,9 +72,11 @@ signal RF_A_signal : STD_LOGIC_VECTOR(31 DOWNTO 0);
 signal RF_B_signal : STD_LOGIC_VECTOR(31 DOWNTO 0);
 signal Immed_signal : STD_LOGIC_VECTOR(31 DOWNTO 0);
 
+
+
 begin
 
-MUX01 : MUX_5x2_1 port map ( sel => RF_B_sel,
+MUX01 : MUX_5x2_1 port map ( sel => SIGNAL_IMMED,
 									in_A =>Instr(15 downto 11),
 									in_B =>Instr(20 downto 16),
 									output => MUX5_output_signal);
@@ -109,41 +112,52 @@ RF_B <= RF_B_signal;
 process(Instr)
 begin
 if(Instr(31 downto 30) =  "10") then
-    DEC_IMMED <= '0';
+    SIGNAL_IMMED <= '0';
     cloud_enable <= "00";
+    SIGNAL_PC_SEL <= '0';
 else
-    DEC_IMMED <= '1';
+    SIGNAL_IMMED <= '1';
     if(Instr(31 downto 26) =  "111000") then                -- li
         cloud_enable <= "01";
+        SIGNAL_PC_SEL <= '0';
     elsif(Instr(31 downto 26) =  "111001") then             -- lui
         cloud_enable <= "00";
+        SIGNAL_PC_SEL <= '0';
     elsif(Instr(31 downto 26) =  "110000") then             -- addi
         cloud_enable <= "01";
+        SIGNAL_PC_SEL <= '0';
     elsif(Instr(31 downto 26) =  "110010") then             --andi
-        cloud_enable <= "00";      
+        cloud_enable <= "00";
+        SIGNAL_PC_SEL <= '0';      
     elsif(Instr(31 downto 26) =  "110011") then             -- ori
         cloud_enable <= "00";
+        SIGNAL_PC_SEL <= '0';
     elsif(Instr(31 downto 26) =  "111111") then             -- B
         cloud_enable <= "11";
+        SIGNAL_PC_SEL <= '0';
     elsif(Instr(31 downto 26) =  "010000") then             -- beq
         if(RF_A_signal = RF_B_signal) then
             cloud_enable <= "11";
-            DEC_PC_SEL <= '1';
+            SIGNAL_PC_SEL <= '1';
         else
-            DEC_PC_SEL <= '0';
+            SIGNAL_PC_SEL <= '0';
         end if;
     elsif(Instr(31 downto 26) =  "010001") then             -- bne
         if(RF_A_signal = RF_B_signal) then
-            DEC_PC_SEL <= '0';
+            SIGNAL_PC_SEL <= '0';
         else
             cloud_enable <= "11";
-            DEC_PC_SEL <= '1';
+            SIGNAL_PC_SEL <= '1';
         end if;    
     else
         cloud_enable <= "01";                               -- Lb | Sb | Lw | Sw
+        SIGNAL_PC_SEL <= '0';
     end if;
 end if;   
            
 end process;    
+
+DEC_IMMED <= SIGNAL_IMMED;
+DEC_PC_SEL <= SIGNAL_PC_SEL;
 
 end Behavioral;
