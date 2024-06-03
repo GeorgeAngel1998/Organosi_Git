@@ -12,23 +12,31 @@ entity DEC_STAGE is
            Immed : out  STD_LOGIC_VECTOR (31 downto 0);
            RF_A : out  STD_LOGIC_VECTOR (31 downto 0);
            RF_B : out  STD_LOGIC_VECTOR (31 downto 0);
+           ALU_func : out STD_LOGIC_VECTOR (3 downto 0);
            
            DEC_PC_SEL : out STD_LOGIC;      
            
            --Testing Outputs
            TEST_Ard1_out : out STD_LOGIC_VECTOR(4 downto 0);
            TEST_Ard2_out : out STD_LOGIC_VECTOR(4 downto 0);
-           TEST_Awr_out : out STD_LOGIC_VECTOR(4 downto 0)
+           TEST_Awr_out : out STD_LOGIC_VECTOR(4 downto 0);
+           TEST_PC_SEL : out STD_LOGIC;
+           TEST_RF_WrEn : out STD_LOGIC;
+           TEST_RF_WrData_sel : out STD_LOGIC;
+           TEST_RF_B_sel : out STD_LOGIC;
+           TEST_cloud_enable : out STD_LOGIC_VECTOR (1 downto 0)
+           
        );
 end DEC_STAGE;
 
 architecture Behavioral of DEC_STAGE is
 
 SIGNAL cloud_enable : STD_LOGIC_VECTOR (1 downto 0);
-SIGNAL SIGNAL_IMMED : STD_LOGIC := '0';
 SIGNAL SIGNAL_PC_SEL : STD_LOGIC := '0';
 SIGNAL SIGNAL_RF_WrEn : STD_LOGIC := '0';
 SIGNAL SIGNAL_RF_B_sel : STD_LOGIC := '0';
+SIGNAL SIGNAL_RF_WrData_sel : STD_LOGIC := '0';
+SIGNAL SIGNAL_ALU_Func : STD_LOGIC_VECTOR(3 downto 0) := "0000";
 
 component Register_File is
 	Port ( Ard1 : in  STD_LOGIC_VECTOR (4 downto 0);
@@ -73,13 +81,13 @@ signal Immed_signal : STD_LOGIC_VECTOR(31 DOWNTO 0);
 
 begin
 
-MUX01 : MUX_5x2_1 port map ( sel => SIGNAL_IMMED,
+MUX01 : MUX_5x2_1 port map ( sel => SIGNAL_RF_B_sel,
 									in_A =>Instr(15 downto 11),
 									in_B =>Instr(20 downto 16),
 									output => MUX5_output_signal);
 									
 
-MUX02 : MUX_32x2_1 port map ( sel => SIGNAL_RF_B_sel,
+MUX02 : MUX_32x2_1 port map ( sel => SIGNAL_RF_WrData_sel,
 								     	 in_A =>ALU_out,
 										 in_B =>MEM_out,
 										 output=> MUX32_output_signal);
@@ -101,6 +109,11 @@ RF : Register_File port map ( Ard1 => Instr(25 downto 21),
 TEST_Ard1_out <= Instr(25 downto 21);
 TEST_Ard2_out <= MUX5_output_signal;
 TEST_Awr_out <= Instr(20 downto 16);
+TEST_PC_SEL <= SIGNAL_PC_SEL;
+TEST_RF_WrEn <= SIGNAL_RF_WrEn;
+TEST_RF_B_sel <= SIGNAL_RF_B_sel;
+TEST_cloud_enable <= cloud_enable;
+TEST_RF_WrData_sel <= SIGNAL_RF_WrData_sel;
 	
 Immed <= Immed_signal;
 RF_A <= RF_A_signal;
@@ -109,83 +122,115 @@ RF_B <= RF_B_signal;
 process(Instr)
 begin
     if(Instr(31 downto 30) =  "10") then
-        SIGNAL_IMMED <= '0';
+        SIGNAL_ALU_Func <= Instr(3 downto 0);
         cloud_enable <= "00";
         SIGNAL_PC_SEL <= '0';
         SIGNAL_RF_WrEn <= '1';
-        SIGNAL_RF_B_sel <= '0';                                 -- Write from ALU    
+        SIGNAL_RF_WrData_sel <= '0';  
+        SIGNAL_RF_B_sel <= '0';  
     else
-        SIGNAL_IMMED <= '1';
-        SIGNAL_RF_B_sel <= '0';
-        
+    
+        SIGNAL_RF_B_sel <= '1'; 
+                   
         if(Instr(31 downto 26) =  "111000") then                -- li
+        
+            SIGNAL_ALU_Func <= "0000";
             cloud_enable <= "01";
             SIGNAL_PC_SEL <= '0';
             SIGNAL_RF_WrEn <= '1';
-            SIGNAL_RF_B_sel <= '-';                     -- dont care
+            SIGNAL_RF_WrData_sel <= '0';   
+                              
         elsif(Instr(31 downto 26) =  "111001") then             -- lui
+        
+            SIGNAL_ALU_Func <= "0000";
             cloud_enable <= "00";
             SIGNAL_PC_SEL <= '0';
             SIGNAL_RF_WrEn <= '1';
-            SIGNAL_RF_B_sel <= '-';                     -- dont care
+            SIGNAL_RF_WrData_sel <= '0';
+                                 
         elsif(Instr(31 downto 26) =  "110000") then             -- addi
+        
+            SIGNAL_ALU_Func <= "0000";
             cloud_enable <= "01";
             SIGNAL_PC_SEL <= '0';
             SIGNAL_RF_WrEn <= '1';
-            SIGNAL_RF_B_sel <= '-';                     -- dont care
+            SIGNAL_RF_WrData_sel <= '0'; 
+                                
         elsif(Instr(31 downto 26) =  "110010") then             --andi
+        
+            SIGNAL_ALU_Func <= "0010";
             cloud_enable <= "00";
             SIGNAL_PC_SEL <= '0';
             SIGNAL_RF_WrEn <= '1'; 
-            SIGNAL_RF_B_sel <= '-';                     -- dont care     
+            SIGNAL_RF_WrData_sel <= '0'; 
+                                    
         elsif(Instr(31 downto 26) =  "110011") then             -- ori
+        
+            SIGNAL_ALU_Func <= "0011";
             cloud_enable <= "00";
             SIGNAL_PC_SEL <= '0';
             SIGNAL_RF_WrEn <= '1';
-            SIGNAL_RF_B_sel <= '-';                     -- dont care
+            SIGNAL_RF_WrData_sel <= '0';     
+                            
         elsif(Instr(31 downto 26) =  "111111") then             -- B
+        
+            SIGNAL_ALU_Func <= "0000";
             cloud_enable <= "11";
             SIGNAL_PC_SEL <= '0';
             SIGNAL_RF_WrEn <= '0';
-            SIGNAL_RF_B_sel <= '-';                    -- dont care
+            SIGNAL_RF_WrData_sel <= '0';                    
+            
         elsif(Instr(31 downto 26) =  "010000") then             -- beq
-            if(RF_A_signal = RF_B_signal) then
+        
+            SIGNAL_ALU_Func <= "0000";          
+            SIGNAL_RF_WrEn <= '0';
+            SIGNAL_RF_WrData_sel <= '0';
+             
+            if(RF_A_signal = RF_B_signal) then            
                 cloud_enable <= "11";
                 SIGNAL_PC_SEL <= '1';
             else
                 SIGNAL_PC_SEL <= '0';
             end if;
-            SIGNAL_RF_WrEn <= '0';
-            SIGNAL_RF_B_sel <= '-';                    -- dont care
+                   
+            
         elsif(Instr(31 downto 26) =  "010001") then             -- bne
+        
+            SIGNAL_ALU_Func <= "0000";
+            SIGNAL_RF_WrEn <= '0';
+            SIGNAL_RF_WrData_sel <= '0'; 
+            
             if(RF_A_signal = RF_B_signal) then
                 SIGNAL_PC_SEL <= '0';
             else
                 cloud_enable <= "11";
                 SIGNAL_PC_SEL <= '1';
             end if;    
-            SIGNAL_RF_WrEn <= '0';
-            SIGNAL_RF_B_sel <= '-';                    -- dont care
+                   
         elsif(Instr(31 downto 26) =  "000011") then             -- Lb
+            SIGNAL_ALU_Func <= "0000";
             SIGNAL_RF_WrEn <= '1';     
             cloud_enable <= "01";
             SIGNAL_PC_SEL <= '0';
-            SIGNAL_RF_B_sel <= '0';                    -- Write from ALU
+            SIGNAL_RF_WrData_sel <= '0';
         elsif(Instr(31 downto 26) =  "001111") then             -- Lw
+            SIGNAL_ALU_Func <= "0000";
             SIGNAL_RF_WrEn <= '1';     
             cloud_enable <= "01";
             SIGNAL_PC_SEL <= '0';
-            SIGNAL_RF_B_sel <= '1';                    -- Write from MEM
+            SIGNAL_RF_WrData_sel <= '1';                    -- Write from MEM
         else
+            SIGNAL_ALU_Func <= "0000";
             SIGNAL_RF_WrEn <= '1';     
             cloud_enable <= "01";                               -- Sb or Sw
             SIGNAL_PC_SEL <= '0';
-            SIGNAL_RF_B_sel <= '-';                    -- dont care @TODO ???
+            --SIGNAL_RF_B_sel <= '-';                    -- dont care @TODO ???
         end if;
     end if;   
            
 end process;    
 
+ALU_func <= SIGNAL_ALU_func;
 DEC_PC_SEL <= SIGNAL_PC_SEL;
 
 end Behavioral;

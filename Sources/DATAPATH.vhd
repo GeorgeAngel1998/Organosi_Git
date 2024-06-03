@@ -12,6 +12,7 @@ entity DATAPATH is
        TEST_IMMED   : out STD_LOGIC_VECTOR(31 downto 0);      
        TEST_RFA     : out STD_LOGIC_VECTOR(31 downto 0);
        TEST_RFB     : out STD_LOGIC_VECTOR(31 downto 0);
+       TEST_ALU_FUNC  : out STD_LOGIC_VECTOR(3 downto 0);
        TEST_ALU_OUT : out STD_LOGIC_VECTOR(31 downto 0);     
        TEST_MEM_OUT : out STD_LOGIC_VECTOR(31 downto 0)
   );
@@ -39,13 +40,9 @@ component DEC_STAGE is
            Immed : out  STD_LOGIC_VECTOR (31 downto 0);
            RF_A : out  STD_LOGIC_VECTOR (31 downto 0);
            RF_B : out  STD_LOGIC_VECTOR (31 downto 0);
+           ALU_func : out STD_LOGIC_VECTOR (3 downto 0);
            
-           DEC_PC_SEL : out STD_LOGIC;      
-           
-           --Testing Outputs
-           TEST_Ard1_out : out STD_LOGIC_VECTOR(4 downto 0);
-           TEST_Ard2_out : out STD_LOGIC_VECTOR(4 downto 0);
-           TEST_Awr_out : out STD_LOGIC_VECTOR(4 downto 0)
+           DEC_PC_SEL : out STD_LOGIC      
        );
 end component;
 
@@ -82,6 +79,7 @@ signal RF_A_signal : std_logic_vector(31 downto 0);
 signal RF_B_signal : std_logic_vector(31 downto 0);
 signal Immed_signal : std_logic_vector(31 downto 0);
 
+signal SIGNAL_ALU_func : STD_LOGIC_VECTOR(3 downto 0) := "0000";
 signal SIGNAL_PC_SEL : STD_LOGIC := '0';
 
 begin
@@ -93,21 +91,20 @@ IFS : IFSTAGE PORT MAP(
       Reset => Datapath_Reset,
       Clk => Datapath_Clk,
       Instr => Instr_signal
---    Instr => INSTR_TRPL_BYPASS
 );
 
 DECS : DEC_STAGE PORT MAP (
     Clk => Datapath_Clk,
-    Instr => Instr_signal,  --SSSSSS
+    Instr => Instr_signal,  
         
     ALU_out => ALU_out_signal,
     MEM_out => MEM_Dataout_signal,
 
-    Reset => Datapath_Reset,         --SSSSSS
-    Immed => Immed_signal,           --SSSSSS 
+    Reset => Datapath_Reset,         
+    Immed => Immed_signal,           
     RF_A => RF_A_signal,
     RF_B => RF_B_signal,
-    
+    ALU_func => SIGNAL_ALU_func,
     DEC_PC_SEL => SIGNAL_PC_SEL
 );
 
@@ -116,7 +113,7 @@ EXECS : EX_STAGE PORT MAP (
     RF_B => RF_B_signal,
     Immed => Immed_signal,
     ALU_Bin_sel => ALU_Bin_sel,
-    ALU_func => ALU_func,
+    ALU_func => SIGNAL_ALU_func,
     ALU_out => ALU_out_signal
 );
 
@@ -133,6 +130,7 @@ TEST_INSTR   <= Instr_signal;
 TEST_IMMED   <= Immed_signal;
 TEST_RFA     <= RF_A_signal;
 TEST_RFB     <= RF_B_signal;
+TEST_ALU_FUNC <= SIGNAL_ALU_func;
 TEST_ALU_OUT <= ALU_OUT_SIGNAL;
 TEST_MEM_OUT <= MEM_Dataout_signal;
 

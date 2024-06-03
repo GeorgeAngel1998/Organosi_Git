@@ -12,20 +12,20 @@ entity Register_File is
 		Dout2	: out STD_LOGIC_VECTOR (31 downto 0);	
 		Din		: in STD_LOGIC_VECTOR (31 downto 0);
 		WrEn	: in STD_LOGIC;
-		RST   : in STD_LOGIC
+		RST   : in STD_LOGIC;
 		
---		-- Testing Outputs
---		TEST_Decoder_out: out std_logic_vector (31 downto 0);
---		TEST_32MUX_1_out: out STD_LOGIC_VECTOR (31 downto 0); 
---		TEST_32MUX_2_out: out STD_LOGIC_VECTOR (31 downto 0);
---		TEST_AND_0: out STD_LOGIC;
---		TEST_AND_2: out STD_LOGIC;
---		TEST_R0_out: out STD_LOGIC_VECTOR (31 downto 0);
---		TEST_R1_out: out STD_LOGIC_VECTOR (31 downto 0);
---		TEST_R2_out: out STD_LOGIC_VECTOR (31 downto 0);
---		TEST_R3_out: out STD_LOGIC_VECTOR (31 downto 0);
---		TEST_compare_1_out: out STD_LOGIC;
---		TEST_compare_2_out: out STD_LOGIC		 
+		-- Testing Outputs
+		TEST_Decoder_out: out std_logic_vector (31 downto 0);
+		TEST_32MUX_1_out: out STD_LOGIC_VECTOR (31 downto 0); 
+		TEST_32MUX_2_out: out STD_LOGIC_VECTOR (31 downto 0);
+		TEST_AND_0: out STD_LOGIC;
+		TEST_AND_2: out STD_LOGIC;
+		TEST_R0_out: out STD_LOGIC_VECTOR (31 downto 0);
+		TEST_R1_out: out STD_LOGIC_VECTOR (31 downto 0);
+		TEST_R2_out: out STD_LOGIC_VECTOR (31 downto 0);
+		TEST_R3_out: out STD_LOGIC_VECTOR (31 downto 0);
+		TEST_compare_1_out: out STD_LOGIC;
+		TEST_compare_2_out: out std_logic		 
 	 );
 end Register_File;
 
@@ -582,19 +582,19 @@ MUX12: MUX_32x2_1 port map(
     output 		=> Dout2_signal
 );
 
---TEST_Decoder_out <= Dec_Output_signal;
+TEST_Decoder_out <= Dec_Output_signal;
 
---TEST_AND_0 <= And_out_0_signal;
---TEST_AND_2 <= And_out_2_signal;
---TEST_32MUX_1_out <= MUX01_Output_signal;
---TEST_32MUX_2_out <= MUX02_Output_signal;
---TEST_compare_1_out <= Compare_Module_1_Output_signal;
---TEST_compare_2_out <= Compare_Module_2_Output_signal;
+TEST_AND_0 <= And_out_0_signal;
+TEST_AND_2 <= And_out_2_signal;
+TEST_32MUX_1_out <= MUX01_Output_signal;
+TEST_32MUX_2_out <= MUX02_Output_signal;
+TEST_compare_1_out <= Compare_Module_1_Output_signal;
+TEST_compare_2_out <= Compare_Module_2_Output_signal;
 
---TEST_R0_out <= R0_signal;
---TEST_R1_out <= R1_signal;
---TEST_R2_out <= R2_signal;
---TEST_R3_out <= R3_signal;
+TEST_R0_out <= R0_signal;
+TEST_R1_out <= R1_signal;
+TEST_R2_out <= R2_signal;
+TEST_R3_out <= R3_signal;
 
 Dout1 <= Dout1_signal;
 Dout2 <= Dout2_signal;
