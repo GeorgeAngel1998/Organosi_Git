@@ -4,18 +4,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity DATAPATH is
   Port ( Datapath_Clk : in STD_LOGIC;
          Datapath_Reset : in STD_LOGIC;
-         PC_LdEn : in  STD_LOGIC;
---         RF_WrEn : in STD_LOGIC;
---         RF_WrData_sel : in  STD_LOGIC;
---         RF_B_sel : in  STD_LOGIC;
---         cloud_enable : in STD_LOGIC_VECTOR(1 downto 0);
-         ALU_func : in STD_LOGIC_VECTOR(3 downto 0);
          ALU_Bin_sel : in STD_LOGIC;       
          Mem_WrEn : in STD_LOGIC;
---         Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
        
-       -- Testomg Outputs
-       
+       -- Testomg Outputs       
        TEST_INSTR   : out STD_LOGIC_VECTOR(31 downto 0);
        TEST_IMMED   : out STD_LOGIC_VECTOR(31 downto 0);      
        TEST_RFA     : out STD_LOGIC_VECTOR(31 downto 0);
@@ -97,7 +89,7 @@ begin
 IFS : IFSTAGE PORT MAP(
       PC_Immed => Immed_signal,
       PC_sel => SIGNAL_PC_SEL,
-      PC_LdEn => PC_LdEn,
+      PC_LdEn => SIGNAL_PC_SEL,
       Reset => Datapath_Reset,
       Clk => Datapath_Clk,
       Instr => Instr_signal

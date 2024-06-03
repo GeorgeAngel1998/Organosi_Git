@@ -11,15 +11,8 @@ ARCHITECTURE behavior OF DATAPATH_tb_top_5 IS
 COMPONENT DATAPATH is
   Port ( Datapath_Clk : in STD_LOGIC;
          Datapath_Reset : in STD_LOGIC;
-         PC_LdEn : in  STD_LOGIC;
---         RF_WrEn : in STD_LOGIC;
---         RF_WrData_sel : in  STD_LOGIC;
---         RF_B_sel : in  STD_LOGIC;
---         cloud_enable : in STD_LOGIC_VECTOR(1 downto 0);
-         ALU_func : in STD_LOGIC_VECTOR(3 downto 0);
          ALU_Bin_sel : in STD_LOGIC;       
          Mem_WrEn : in STD_LOGIC;
---         Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
        
        -- Testomg Outputs
        
@@ -36,15 +29,11 @@ end COMPONENT;
    SIGNAL Datapath_Clk : std_logic;
    SIGNAL Datapath_Reset : std_logic;
    SIGNAL PC_sel : std_logic;
-   SIGNAL PC_LdEn : std_logic;
    SIGNAL RF_WrEn : std_logic;
    SIGNAL RF_WrData_sel : std_logic;
    SIGNAL RF_B_sel : std_logic;
-   SIGNAL cloud_enable : std_logic_vector(1 downto 0);
    SIGNAL ALU_Bin_sel : std_logic;
-   SIGNAL ALU_func : STD_LOGIC_VECTOR(3 downto 0);
    SIGNAL Mem_WrEn : std_logic;
-   SIGNAL Instruction_BYPASS_IF : STD_LOGIC_VECTOR(31 downto 0);
 
    --Outputs            
     SIGNAL   TEST_INSTR   : STD_LOGIC_VECTOR(31 downto 0);
@@ -63,15 +52,7 @@ BEGIN
    uut: DATAPATH PORT MAP (
           Datapath_Clk => Datapath_Clk,
           Datapath_Reset => Datapath_Reset,
---          Instruction_BYPASS_IF => Instruction_BYPASS_IF,
---          PC_sel => PC_sel,
-          PC_LdEn => PC_LdEn,
---          RF_WrEn => RF_WrEn,
---          RF_WrData_sel => RF_WrData_sel,
---          RF_B_sel => RF_B_sel,
---          cloud_enable => cloud_enable,       
           ALU_Bin_sel => ALU_Bin_sel,
-          ALU_func => ALU_func,       
           Mem_WrEn => Mem_WrEn,
         
           TEST_INSTR => TEST_INSTR, 
@@ -97,93 +78,66 @@ end process;
    	
    	Datapath_Reset <= '0';  
     PC_sel       <= '0';                      -- no branch
-    PC_LdEn      <= '1';                      -- enabling PC
     RF_WrEn     <= '1';                       -- We write to a register in RF
     RF_WrData_sel<= '0';                      -- We write from ALU_out
     RF_B_sel   <= '1';                        -- We use Immed
-    ALU_func    <= "0000";                    -- We add the Immed to zero => Immed
     ALU_Bin_sel  <= '1';                      -- We use Immed                    
     Mem_WrEn  <= '0';                         -- We dont use the MEM
-    cloud_enable <= "01";                     -- SignExtend 
-    Instruction_BYPASS_IF <= "11100000000000010000000000000011";    --li R1,6      R1 = 3
     wait for CLK_period;
     
     Datapath_Reset <= '0';  
     PC_sel       <= '0';                      -- no branch
-    PC_LdEn      <= '1';                      -- enabling PC
     RF_WrEn     <= '1';                       -- We write to a register in RF
     RF_WrData_sel<= '0';                      -- We write from ALU_out
     RF_B_sel   <= '1';                        -- We use Immed
-    ALU_func    <= "0000";                    -- We add the Immed to zero => Immed
     ALU_Bin_sel  <= '1';                      -- We use Immed                    
     Mem_WrEn  <= '0';                         -- We dont use the MEM
-    cloud_enable <= "01";                     -- SignExtend 
-    Instruction_BYPASS_IF <= "11100000000000100000000000000010";    --li R2,2      R2 = 2
+
     wait for CLK_period;
     
     Datapath_Reset <= '0';  
     PC_sel       <= '0';                      -- no branch
-    PC_LdEn      <= '1';                      -- enabling PC
     RF_WrEn     <= '1';                       -- We write to a register in RF
     RF_WrData_sel<= '0';                      -- We write from ALU_out
     RF_B_sel   <= '0';                        -- We dont use Immed
-    ALU_func    <= "0000";                    -- add
     ALU_Bin_sel  <= '0';                      -- We dont use Immed                    
-    Mem_WrEn  <= '0';                         -- We dont use the MEM
-    cloud_enable <= "01";                     -- dc
-    Instruction_BYPASS_IF <= "10000000001000110001000000000000";    --add R3, R1 + R2      
+    Mem_WrEn  <= '0';                         -- We dont use the MEM 
     wait for CLK_period;
     
     Datapath_Reset <= '0';  
     PC_sel       <= '0';                      -- no branch
-    PC_LdEn      <= '1';                      -- enabling PC
     RF_WrEn     <= '1';                       -- We write to a register in RF
     RF_WrData_sel<= '0';                      -- We write from ALU_out
     RF_B_sel   <= '0';                        -- We dont use Immed
-    ALU_func    <= "0001";                    -- sub
     ALU_Bin_sel  <= '0';                      -- We dont use Immed                    
-    Mem_WrEn  <= '0';                         -- We dont use the MEM
-    cloud_enable <= "01";                     -- dc
-    Instruction_BYPASS_IF <= "10000000001001000001000000000001";    --add R4, R1 - R2      
+    Mem_WrEn  <= '0';                         -- We dont use the MEM  
     wait for CLK_period;
     
     Datapath_Reset <= '0';  
     PC_sel       <= '0';                      -- no branch
-    PC_LdEn      <= '1';                      -- enabling PC
     RF_WrEn     <= '1';                       -- We write to a register in RF
     RF_WrData_sel<= '0';                      -- We write from ALU_out
     RF_B_sel   <= '0';                        -- We dont use Immed
-    ALU_func    <= "0010";                    -- and
     ALU_Bin_sel  <= '0';                      -- We dont use Immed                    
-    Mem_WrEn  <= '0';                         -- We dont use the MEM
-    cloud_enable <= "01";                     -- dc
-    Instruction_BYPASS_IF <= "10000000001001010001000000000010";    --and R5, R1 and R2      
+    Mem_WrEn  <= '0';                         -- We dont use the MEM 
     wait for CLK_period;
     
     Datapath_Reset <= '0';  
     PC_sel       <= '0';                      -- no branch
-    PC_LdEn      <= '1';                      -- enabling PC
     RF_WrEn     <= '1';                       -- We write to a register in RF
     RF_WrData_sel<= '0';                      -- We write from ALU_out
     RF_B_sel   <= '0';                        -- We dont use Immed
-    ALU_func    <= "0100";                    -- not
     ALU_Bin_sel  <= '0';                      -- We dont use Immed                    
-    Mem_WrEn  <= '0';                         -- We dont use the MEM
-    cloud_enable <= "01";                     -- dc
-    Instruction_BYPASS_IF <= "10000000001001100000000000000100";    --not R6, not R1      
+    Mem_WrEn  <= '0';                         -- We dont use the MEM    
     wait for CLK_period;
     
     Datapath_Reset <= '0';  
     PC_sel       <= '0';                      -- no branch
-    PC_LdEn      <= '1';                      -- enabling PC
     RF_WrEn     <= '1';                       -- We write to a register in RF
     RF_WrData_sel<= '0';                      -- We write from ALU_out
     RF_B_sel   <= '0';                        -- We dont use Immed
-    ALU_func    <= "0011";                    -- or
     ALU_Bin_sel  <= '0';                      -- We dont use Immed                    
     Mem_WrEn  <= '0';                         -- We dont use the MEM
-    cloud_enable <= "01";                     -- dc
-    Instruction_BYPASS_IF <= "10000000001001110001000000000011";    --and R7, R1 or R2      
     wait for CLK_period;
      
             
