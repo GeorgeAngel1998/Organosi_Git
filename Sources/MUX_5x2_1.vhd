@@ -12,17 +12,10 @@ architecture Behavioral of MUX_5x2_1 is
     signal output_signal : STD_LOGIC_VECTOR (4 downto 0);
 begin
 
-process(sel)
-begin
-case sel is
-	when '0' =>
-    	output_signal <= in_A;
-	when '1' =>
-	    output_signal <= in_B;
-	when others =>
-	   output_signal <= "11111";
-end case;
-end process;
+--process(sel)
+--begin
+
+output_signal <= in_A    when sel = '0' else in_B when sel = '1';
 
 output <= output_signal;
 

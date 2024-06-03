@@ -113,25 +113,25 @@ end process;
 	  Ard1 <= "00000";
 	  Ard2 <= "00010";
 	  Awr <= "00010";
-	  Din <= "00000000000000000000000000000010";
+	  Din <= x"00000003";
 	  WrEn <= '1';
 	  RST <= '0';
       wait for CLK_period;
                  
-      -- R1 R2 read , R0 writing
-      Ard1 <= "00001";
-	  Ard2 <= "00010";
+      -- R2 R3 read , R0 writing
+      Ard1 <= "00010";
+	  Ard2 <= "00011";
 	  Awr <= "00000";
-	  Din <= "11111111111111111111111111111111";
+	  Din <= x"00000001";
 	  WrEn <= '1';
 	  RST <= '0';
       wait for CLK_period;
           
-      -- R0 R2 read , R1 no writing
-      Ard1 <= "00000";
-	  Ard2 <= "00010";
+      -- R3 R0 read , R1 no writing
+      Ard1 <= "00011";
+	  Ard2 <= "00000";
 	  Awr <= "00001";
-	  Din <= "00000000000000000000000000000001";
+	  Din <= x"00000002";
 	  WrEn <= '0';
 	  RST <= '0';
       wait for CLK_period;
@@ -140,7 +140,7 @@ end process;
       Ard1 <= "00001";
 	  Ard2 <= "00010";
 	  Awr <= "00010";
-	  Din <= "11111111111111110000000000000000";
+	  Din <= x"afafafaf";
 	  WrEn <= '1';
 	  RST <= '0';
       wait for CLK_period;
@@ -149,7 +149,7 @@ end process;
       Ard1 <= "00001";
 	  Ard2 <= "00010";
 	  Awr <= "00001";
-	  Din <= "11111111111111111111111111111111";
+	  Din <= x"fafafafa";
 	  WrEn <= '1';
 	  RST <= '0';
       wait for CLK_period;

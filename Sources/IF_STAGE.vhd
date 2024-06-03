@@ -83,7 +83,7 @@ begin
        spo => memory_out_signal
        );
     
-      process (PC_Immed, MUX_input_A_signal)
+    process (PC_Immed, MUX_input_A_signal)
        begin
            MUX_input_B_signal <= PC_Immed + MUX_input_A_signal;
            MUX_input_A_signal <= register_out_signal + 4;

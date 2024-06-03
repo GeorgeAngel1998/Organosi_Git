@@ -14,7 +14,7 @@ architecture Behavioral of Compare_Module is
     
 begin
 
-    Output <= 	'1' after 1 ns when (WrEn = '1' and Awr = Ard) else
-				'0' after 1 ns;
+    Output <= 	'1' when (WrEn = '1' and Awr = Ard) else
+				'0';
 
 end Behavioral;  

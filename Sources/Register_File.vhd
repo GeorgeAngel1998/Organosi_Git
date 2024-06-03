@@ -14,7 +14,7 @@ entity Register_File is
 		WrEn	: in STD_LOGIC;
 		RST   : in STD_LOGIC;
 		
-		-- Testing Outputs
+--		-- Testing Outputs
 		TEST_Decoder_out: out std_logic_vector (31 downto 0);
 		TEST_32MUX_1_out: out STD_LOGIC_VECTOR (31 downto 0); 
 		TEST_32MUX_2_out: out STD_LOGIC_VECTOR (31 downto 0);
@@ -25,7 +25,7 @@ entity Register_File is
 		TEST_R2_out: out STD_LOGIC_VECTOR (31 downto 0);
 		TEST_R3_out: out STD_LOGIC_VECTOR (31 downto 0);
 		TEST_compare_1_out: out STD_LOGIC;
-		TEST_compare_2_out: out std_logic		 
+		TEST_compare_2_out: out STD_LOGIC		 
 	 );
 end Register_File;
 
@@ -179,7 +179,6 @@ signal Compare_Module_1_Output_signal : STD_LOGIC;
 signal Compare_Module_2_Output_signal : STD_LOGIC;
 signal Dout1_signal : STD_LOGIC_VECTOR (31 downto 0);
 signal Dout2_signal : STD_LOGIC_VECTOR (31 downto 0);
-signal reset_signal : STD_LOGIC := '0';
 
 -- END OF SIGNALS ---------------------------------------------------------------
 
@@ -571,14 +570,14 @@ MUX02: MUX_32x32_1 port map(
 MUX11: MUX_32x2_1 port map(
     in_A        => MUX01_Output_signal,
     in_B        => Din,
-    sel    => Compare_Module_1_Output_signal, 
+    sel         => Compare_Module_1_Output_signal, 
     output 		=> Dout1_signal
 );
 
 MUX12: MUX_32x2_1 port map(
     in_A        => MUX02_Output_signal,
     in_B        => Din,
-    sel    => Compare_Module_2_Output_signal, 
+    sel         => Compare_Module_2_Output_signal, 
     output 		=> Dout2_signal
 );
 
