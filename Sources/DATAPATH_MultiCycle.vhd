@@ -20,18 +20,9 @@ entity DATAPATH_MultiCycle is
          RF_B_REG_WE : in STD_LOGIC;      
          Immed_Reg_WE : in STD_LOGIC;
          ALU_out_Reg_WE : in STD_LOGIC;
-         MEM_Dataout_REG_WE : in STD_LOGIC;
+         MEM_Dataout_REG_WE : in STD_LOGIC
          
-       --Instruction_control : out STD_LOGIC_VECTOR(31 downto 0);
-                           
-
-       -- Testing Outputs
-       TEST_INSTR   : out STD_LOGIC_VECTOR(31 downto 0);
-       TEST_IMMED   : out STD_LOGIC_VECTOR(31 downto 0);      
-       TEST_RFA     : out STD_LOGIC_VECTOR(31 downto 0);
-       TEST_RFB     : out STD_LOGIC_VECTOR(31 downto 0);
-       TEST_ALU_OUT : out STD_LOGIC_VECTOR(31 downto 0);     
-       TEST_MEM_OUT : out STD_LOGIC_VECTOR(31 downto 0)
+       --Instruction_control : out STD_LOGIC_VECTOR(31 downto 0);                          
   );
 end DATAPATH_MultiCycle;
 
@@ -216,14 +207,4 @@ Reg_MEM_Dataout: Registers PORT MAP(
 
 --Outputs
 --Instruction_control <= Instr_REG_signal;
-
---Tests
-TEST_INSTR   <= Instruction_BYPASS_IF;
---TEST_INSTR   <= Instr_REG_signal;
-TEST_IMMED   <= Immed_REG_signal;
-TEST_RFA     <= RF_A_REG_signal;
-TEST_RFB     <= RF_B_REG_signal;
-TEST_ALU_OUT <= ALU_out_REG_signal;
-TEST_MEM_OUT <= MEM_Dataout_REG_signal;
-
 end Behavioral;

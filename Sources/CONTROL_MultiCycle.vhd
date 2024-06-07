@@ -20,21 +20,16 @@ entity CONTROL_MultiCycle is
            RF_B_REG_WE : out STD_LOGIC;      
            Immed_Reg_WE : out STD_LOGIC;
            ALU_out_Reg_WE : out STD_LOGIC;
-           MEM_Dataout_REG_WE : out STD_LOGIC;
-           
-           --Testing
-           TEST_State : out STD_LOGIC_Vector(3 downto 0)
+           MEM_Dataout_REG_WE : out STD_LOGIC         
            );
 end CONTROL_MultiCycle;
 
 architecture Behavioral of CONTROL_MultiCycle is
 
-type state is(S0_RST, S1_Decode, S5_Execute_Li_Lui, S6_Execute_ALU, S7_WriteBack_ALU, S8_Execute_Addi, S9_Execute_Andi, S10_Execute_Ori);
+type state is(S0_Fetch, S1_Decode, S5_Execute_Li_Lui, S6_Execute_ALU, S7_WriteBack_ALU, S8_Execute_Addi, S9_Execute_Andi, S10_Execute_Ori);
 
 --Signals
 SIGNAL current_State ,next_State: state;
-
-Signal TEST_State_s : STD_LOGIC_Vector(3 downto 0);
 
 SIGNAL PC_sel_signal : STD_LOGIC := '0';
 SIGNAL PC_LdEn_signal : STD_LOGIC:= '0';
@@ -60,9 +55,7 @@ process(current_State, Instruction)
 begin
 case current_State is
 
-   when S0_RST =>
-   
-        TEST_State_s <= "0000";
+   when S0_Fetch => 
         
         PC_sel_signal <= '0';
         PC_LdEn_signal <= '0';
@@ -83,9 +76,7 @@ case current_State is
         --next_State <= Fetch;
         next_State <= S1_Decode;
       
-   when S1_Decode =>
-   
-        TEST_State_s <= "0001";
+   when S1_Decode =>   
         
         Instr_REG_WE_signal <= '0';
         RF_A_REG_WE_signal <= '1';
@@ -143,8 +134,6 @@ case current_State is
         
     when S5_Execute_Li_Lui =>
     
-         TEST_State_s <= "0101";
-    
          RF_A_REG_WE_signal <='0';           -- We dont hold the value anymore
 		 RF_B_REG_WE_signal <='0';           -- We dont hold the value anymore
 		 Immed_Reg_WE_signal <='0';          -- We dont hold the value anymore
@@ -153,9 +142,7 @@ case current_State is
 		 ALU_func_signal <= "0000";          -- Add the immediate to zero = Immed
 		 next_State <= S7_WriteBack_ALU;
          
-    when S6_Execute_ALU =>
-    
-         TEST_State_s <= "0110";
+    when S6_Execute_ALU =>  
     
          RF_A_REG_WE_signal <='0';           -- We dont hold the value anymore
 		 RF_B_REG_WE_signal <='0';           -- We dont hold the value anymore
@@ -165,19 +152,15 @@ case current_State is
 		 ALU_func_signal <= Instruction(3 downto 0);
 		 next_State <= S7_WriteBack_ALU;
 		 
-    when S7_WriteBack_ALU =>
-         
-         TEST_State_s <= "0111";
+    when S7_WriteBack_ALU =>      
          
          RF_WrData_sel_signal <= '0';        -- We want from ALU_out
 	     RF_WrEn_signal <= '1';              -- We write to the reg 
 		 Immed_Reg_WE_signal <= '1';         -- We hold the value 
-		 next_State <= S0_RST;
+		 next_State <= S0_Fetch;
 		 
     when S8_Execute_Addi =>
-    
-         TEST_State_s <= "1000";
-    
+      
          RF_A_REG_WE_signal <='0';           -- We dont hold the value anymore
 		 RF_B_REG_WE_signal <='0';           -- We dont hold the value anymore
 		 Immed_Reg_WE_signal <='0';          -- We dont hold the value anymore
@@ -186,9 +169,7 @@ case current_State is
 		 ALU_func_signal <= "0000";          -- add
 		 next_State <= S7_WriteBack_ALU;
     
-    when S9_Execute_Andi =>
-    
-         TEST_State_s <= "1001";
+    when S9_Execute_Andi =>   
     
          RF_A_REG_WE_signal <='0';           -- We dont hold the value anymore
 		 RF_B_REG_WE_signal <='0';           -- We dont hold the value anymore
@@ -199,8 +180,6 @@ case current_State is
 		 next_State <= S7_WriteBack_ALU;
     
     when S10_Execute_Ori =>
-    
-         TEST_State_s <= "1010";
     
          RF_A_REG_WE_signal <='0';           -- We dont hold the value anymore
 		 RF_B_REG_WE_signal <='0';           -- We dont hold the value anymore
@@ -219,7 +198,7 @@ process
 begin  
 wait until Control_Clk'event and Control_Clk='1';	
 if(Control_Reset = '1') then
-   current_State <= S0_RST;
+   current_State <= S0_Fetch;
 else
    current_State <= next_State;
 end if;
@@ -239,8 +218,6 @@ RF_B_REG_WE    <= RF_B_REG_WE_signal;
 Immed_Reg_WE   <= Immed_Reg_WE_signal;
 ALU_out_Reg_WE <= ALU_out_Reg_WE_signal;
 MEM_Dataout_REG_WE <= MEM_Dataout_REG_WE_signal;
-
-TEST_State <= TEST_State_s;
 
 end process;
 	 

@@ -7,15 +7,7 @@ entity PROCESSOR_MultiCycle is
            Reset : in STD_LOGIC;
            
            --Testing Inputs
-           Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
-           
-           -- Testing Outputs
-           TEST_INSTR   : out STD_LOGIC_VECTOR(31 downto 0);
-           TEST_IMMED   : out STD_LOGIC_VECTOR(31 downto 0);      
-           TEST_RFA     : out STD_LOGIC_VECTOR(31 downto 0);
-           TEST_RFB     : out STD_LOGIC_VECTOR(31 downto 0);
-           TEST_ALU_OUT : out STD_LOGIC_VECTOR(31 downto 0);     
-           TEST_MEM_OUT : out STD_LOGIC_VECTOR(31 downto 0) 
+           Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);          
            );
 end PROCESSOR_MultiCycle;
 
@@ -135,14 +127,7 @@ Datapath: DATAPATH_MultiCycle port map ( Datapath_Clk => CLK,
                                          RF_B_REG_WE => RF_B_REG_WE_signal,      
                                          Immed_Reg_WE => Immed_Reg_WE_signal,
                                          ALU_out_Reg_WE => ALU_out_Reg_WE_signal,
-                                         MEM_Dataout_REG_WE => MEM_Dataout_REG_WE_signal,
-                                         
-                                         TEST_INSTR => TEST_INSTR,                                        
-                                         TEST_IMMED => TEST_IMMED,    
-                                         TEST_RFA  => TEST_RFA,
-                                         TEST_RFB  => TEST_RFB,
-                                         TEST_ALU_OUT => TEST_ALU_OUT,  
-                                         TEST_MEM_OUT => TEST_MEM_OUT
+                                         MEM_Dataout_REG_WE => MEM_Dataout_REG_WE_signal
                                        );                                
 
 end Structural;
