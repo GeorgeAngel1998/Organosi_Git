@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity DATAPATH is
+entity DATAPATH_MultiCycle is
   Port ( Datapath_Clk : in STD_LOGIC;
          Datapath_Reset : in STD_LOGIC;
          PC_sel : in  STD_LOGIC;
@@ -14,9 +14,18 @@ entity DATAPATH is
          ALU_Bin_sel : in STD_LOGIC;       
          Mem_WrEn : in STD_LOGIC;
          Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
+         
+         Instr_REG_WE : in STD_LOGIC;
+         RF_A_REG_WE : in STD_LOGIC;
+         RF_B_REG_WE : in STD_LOGIC;      
+         Immed_Reg_WE : in STD_LOGIC;
+         ALU_out_Reg_WE : in STD_LOGIC;
+         MEM_Dataout_REG_WE : in STD_LOGIC;
+         
+       --Instruction_control : out STD_LOGIC_VECTOR(31 downto 0);
+                           
 
-       -- Testomg Outputs
-
+       -- Testing Outputs
        TEST_INSTR   : out STD_LOGIC_VECTOR(31 downto 0);
        TEST_IMMED   : out STD_LOGIC_VECTOR(31 downto 0);      
        TEST_RFA     : out STD_LOGIC_VECTOR(31 downto 0);
@@ -24,9 +33,9 @@ entity DATAPATH is
        TEST_ALU_OUT : out STD_LOGIC_VECTOR(31 downto 0);     
        TEST_MEM_OUT : out STD_LOGIC_VECTOR(31 downto 0)
   );
-end DATAPATH;
+end DATAPATH_MultiCycle;
 
-architecture Behavioral of DATAPATH is
+architecture Behavioral of DATAPATH_MultiCycle is
 
 component IFSTAGE is
     Port ( 
@@ -73,6 +82,16 @@ component MEM_STAGE is
            MEM_DataOut : out STD_LOGIC_VECTOR (31 downto 0));
 end component;
 
+component Registers is
+    Port (
+        CLK : in  STD_LOGIC;
+        RST : in  STD_LOGIC;
+        WE : in  STD_LOGIC;
+        Data : in  STD_LOGIC_VECTOR (31 downto 0);
+        Dout : out  STD_LOGIC_VECTOR (31 downto 0)
+    );
+end component;
+
 -- SIGNALS
 
 -- Exec_stage related signals
@@ -88,24 +107,42 @@ signal RF_A_signal : std_logic_vector(31 downto 0);
 signal RF_B_signal : std_logic_vector(31 downto 0);
 signal Immed_signal : std_logic_vector(31 downto 0);
 
+-- Registers MultiCycle related signals
+signal Instr_REG_signal : std_logic_vector(31 downto 0);
+signal ALU_out_REG_signal : std_logic_vector(31 downto 0);
+signal Immed_REG_signal : std_logic_vector(31 downto 0);
+signal RF_A_REG_signal : std_logic_vector(31 downto 0);
+signal RF_B_REG_signal : std_logic_vector(31 downto 0);
+signal MEM_Dataout_REG_signal : std_logic_vector(31 downto 0);
+
 begin
 
 IFS : IFSTAGE PORT MAP(
-      PC_Immed => Immed_signal,
+      PC_Immed => Immed_REG_signal,
       PC_sel => PC_sel,
       PC_LdEn => PC_LdEn,
       Reset => Datapath_Reset,
       Clk => Datapath_Clk,
       Instr => Instr_signal
 );
+-------------------------------------------------------------
 
+Reg_Instr: Registers PORT MAP(
+	CLK => Datapath_Clk,
+	WE => Instr_REG_WE,
+	Data => Instr_signal,
+	RST => Datapath_Reset,
+	Dout => Instr_REG_signal
+);
+
+-------------------------------------------------------------
 DECS : DEC_STAGE PORT MAP (
     Clk => Datapath_Clk,
-    --Instr => Instr_signal,
+    --Instr => Instr_REG_signal,
     Instr => Instruction_BYPASS_IF,  
     RF_WrEn => RF_WrEn,                         
     ALU_out => ALU_out_signal,
-    MEM_out => MEM_Dataout_signal,
+    MEM_out => MEM_Dataout_REG_signal,
     RF_WrData_sel => RF_WrData_sel,  
     RF_B_sel => RF_B_sel,            
     cloud_enable => cloud_enable,    
@@ -114,30 +151,79 @@ DECS : DEC_STAGE PORT MAP (
     RF_A => RF_A_signal,
     RF_B => RF_B_signal   
 );
+-------------------------------------------------------------
 
+Reg_RF_A: Registers PORT MAP(
+	CLK => Datapath_Clk,
+	WE => RF_A_REG_WE,
+	Data => RF_A_signal,
+	RST => Datapath_Reset,
+	Dout => RF_A_REG_signal
+);
+
+Reg_RF_B: Registers PORT MAP(
+	CLK => Datapath_Clk,
+	WE => RF_B_REG_WE,
+	Data => RF_B_signal,
+	RST => Datapath_Reset,
+	Dout => RF_B_REG_signal
+);
+
+Reg_Immed: Registers PORT MAP(
+	CLK => Datapath_Clk,
+	WE => Immed_Reg_WE,
+	Data => Immed_signal,
+	RST => Datapath_Reset,
+	Dout => Immed_REG_signal
+);
+
+-------------------------------------------------------------
 EXECS : EX_STAGE PORT MAP (
-    RF_A => RF_A_signal,
-    RF_B => RF_B_signal,
-    Immed => Immed_signal,
+    RF_A => RF_A_REG_signal,
+    RF_B => RF_B_REG_signal,
+    Immed => Immed_REG_signal,
     ALU_Bin_sel => ALU_Bin_sel,
     ALU_func => ALU_func,
     ALU_out => ALU_out_signal
 );
+-------------------------------------------------------------
 
+Reg_ALU_out: Registers PORT MAP(
+	CLK => Datapath_Clk,
+	WE => ALU_out_Reg_WE,
+	Data => ALU_out_signal,
+	RST => Datapath_Reset,
+	Dout => ALU_out_REG_signal
+);
+
+-------------------------------------------------------------
 MEMS : MEM_STAGE PORT MAP (
    clk => Datapath_Clk,
    Mem_WrEn => Mem_WrEn,
-   ALU_MEM_Addr => ALU_out_signal,
-   MEM_DataIn => RF_B_signal,                       
+   ALU_MEM_Addr => ALU_out_REG_signal,
+   MEM_DataIn => RF_B_REG_signal,                       
    MEM_DataOut => MEM_Dataout_signal
 );
+-------------------------------------------------------------
 
+Reg_MEM_Dataout: Registers PORT MAP(
+	CLK => Datapath_Clk,
+	WE => MEM_Dataout_REG_WE,
+	Data => MEM_Dataout_signal,
+	RST => Datapath_Reset,
+	Dout => MEM_Dataout_REG_signal
+);
+
+--Outputs
+--Instruction_control <= Instr_REG_signal;
+
+--Tests
 TEST_INSTR   <= Instruction_BYPASS_IF;
---TEST_INSTR   <= Instr_signal;
-TEST_IMMED   <= Immed_signal;
-TEST_RFA     <= RF_A_signal;
-TEST_RFB     <= RF_B_signal;
-TEST_ALU_OUT <= ALU_OUT_SIGNAL;
-TEST_MEM_OUT <= MEM_Dataout_signal;
+--TEST_INSTR   <= Instr_REG_signal;
+TEST_IMMED   <= Immed_REG_signal;
+TEST_RFA     <= RF_A_REG_signal;
+TEST_RFB     <= RF_B_REG_signal;
+TEST_ALU_OUT <= ALU_out_REG_signal;
+TEST_MEM_OUT <= MEM_Dataout_REG_signal;
 
 end Behavioral;
