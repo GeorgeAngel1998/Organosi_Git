@@ -91,14 +91,13 @@ begin
     RESET <= '0';
     wait for CLK_period;
     wait for CLK_period;
-    wait for CLK_period;
+
     
     -- PC_Lden = 1 && PC_sel = 1 -- PC+4+PC_Immed option
     PC_Immed <= "00000000000000000000000011110000";
     PC_sel <= '1';
     PC_LdEn <= '0';
     RESET <= '0';
-    wait for CLK_period;
     wait for CLK_period;
     wait for CLK_period;
     
@@ -109,16 +108,26 @@ begin
     RESET <= '0';
     wait for CLK_period;
     wait for CLK_period;
-    wait for CLK_period;
+--    wait for CLK_period;
     
     -- PC_Lden = 1 && PC_sel = 0 -- PC+4 option
     PC_Immed <= "00000000000000000000000000001111";
     PC_sel <= '0';
     PC_LdEn <= '1';
---    RESET <= '1';
+    RESET <= '1';
+    wait for CLK_period;
+--    wait for CLK_period;
+--    wait for CLK_period;
+
+    -- PC_Lden = 1 && PC_sel = 0 -- PC+4 option
+PC_Immed <= "00000000000000000000000000000000";
+PC_sel <= '0';
+PC_LdEn <= '1';
+RESET <= '0';
+wait for CLK_period;
     wait for CLK_period;
     wait for CLK_period;
-    wait for CLK_period;
+
     
     wait;
 end process;

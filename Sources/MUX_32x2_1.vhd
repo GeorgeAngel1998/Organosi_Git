@@ -10,8 +10,6 @@ end MUX_32x2_1;
 
 architecture Behavioral of MUX_32x2_1 is
 begin
-
-    output <= in_A    when sel = '0' else
-              in_B    when sel = '1';
-
+    output <= in_A when sel = '0' else
+              in_B;
 end Behavioral;
