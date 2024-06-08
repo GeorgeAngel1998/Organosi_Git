@@ -42,11 +42,11 @@ ALU1: ALU port map ( A => RF_A,
                      Cout => open,
                      Ovf => open
                     );
-                    
+
 MUX1: MUX_32x2_1 port map ( in_A => RF_B,
                             in_B => Immed,
                             sel => ALU_Bin_sel,
                             output => MUX_Out_signal
                             );
-                                      
+
 end Behavioral;

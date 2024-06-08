@@ -33,5 +33,5 @@ MEM : dist_mem_gen_1 port map ( a => ALU_MEM_Addr(11 downto 2),
                                 spo => MEM_DataOut,
                                 clk => clk
                                 );
-                                                               	                                                    
+
 end Behavioral;
