@@ -59,7 +59,9 @@ class InstructionSet:
 
     def to_coe_format(self):
         coe_lines = ["memory_initialization_radix=2;", "memory_initialization_vector="]
-        coe_lines += [str(inst) + ";" for inst in self.instructions]
+        # Seperate the instructions with a comma and for the final instruction, add a semicolon
+        coe_lines += [str(instruction) + ',' for instruction in self.instructions[:-1]]
+        coe_lines.append(str(self.instructions[-1]) + ';')
         return "\n".join(coe_lines)
 
     def li(self, rd, immediate):
