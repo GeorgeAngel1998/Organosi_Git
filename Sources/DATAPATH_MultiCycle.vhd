@@ -13,16 +13,16 @@ entity DATAPATH_MultiCycle is
          ALU_func : in STD_LOGIC_VECTOR(3 downto 0);
          ALU_Bin_sel : in STD_LOGIC;       
          Mem_WrEn : in STD_LOGIC;
-         Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
+         --Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
          
          Instr_REG_WE : in STD_LOGIC;
          RF_A_REG_WE : in STD_LOGIC;
          RF_B_REG_WE : in STD_LOGIC;      
          Immed_Reg_WE : in STD_LOGIC;
          ALU_out_Reg_WE : in STD_LOGIC;
-         MEM_Dataout_REG_WE : in STD_LOGIC
+         MEM_Dataout_REG_WE : in STD_LOGIC;
          
-       --Instruction_control : out STD_LOGIC_VECTOR(31 downto 0);                          
+         Instruction_control : out STD_LOGIC_VECTOR(31 downto 0)                         
   );
 end DATAPATH_MultiCycle;
 
@@ -129,8 +129,8 @@ Reg_Instr: Registers PORT MAP(
 -------------------------------------------------------------
 DECS : DEC_STAGE PORT MAP (
     Clk => Datapath_Clk,
-    --Instr => Instr_REG_signal,
-    Instr => Instruction_BYPASS_IF,  
+    Instr => Instr_REG_signal,
+    --Instr => Instruction_BYPASS_IF, 
     RF_WrEn => RF_WrEn,                         
     ALU_out => ALU_out_signal,
     MEM_out => MEM_Dataout_REG_signal,
@@ -206,5 +206,5 @@ Reg_MEM_Dataout: Registers PORT MAP(
 );
 
 --Outputs
---Instruction_control <= Instr_REG_signal;
+Instruction_control <= Instr_REG_signal;
 end Behavioral;

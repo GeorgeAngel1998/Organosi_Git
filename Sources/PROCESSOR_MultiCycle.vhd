@@ -4,10 +4,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity PROCESSOR_MultiCycle is
     Port ( CLK : in  STD_LOGIC;
-           Reset : in STD_LOGIC;
+           Reset : in STD_LOGIC
            
            --Testing Inputs
-           Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);          
+           --Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0)          
            );
 end PROCESSOR_MultiCycle;
 
@@ -66,7 +66,6 @@ component DATAPATH_MultiCycle is
          ALU_func : in STD_LOGIC_VECTOR(3 downto 0);
          ALU_Bin_sel : in STD_LOGIC;       
          Mem_WrEn : in STD_LOGIC;
-         Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
          
          Instr_REG_WE : in STD_LOGIC;
          RF_A_REG_WE : in STD_LOGIC;
@@ -75,19 +74,16 @@ component DATAPATH_MultiCycle is
          ALU_out_Reg_WE : in STD_LOGIC;
          MEM_Dataout_REG_WE : in STD_LOGIC;
          
-         -- Testing Outputs
-         TEST_INSTR   : out STD_LOGIC_VECTOR(31 downto 0);
-         TEST_IMMED   : out STD_LOGIC_VECTOR(31 downto 0);      
-         TEST_RFA     : out STD_LOGIC_VECTOR(31 downto 0);
-         TEST_RFB     : out STD_LOGIC_VECTOR(31 downto 0);
-         TEST_ALU_OUT : out STD_LOGIC_VECTOR(31 downto 0);     
-         TEST_MEM_OUT : out STD_LOGIC_VECTOR(31 downto 0)                         
+         Instruction_control : out STD_LOGIC_VECTOR(31 downto 0)                         
   );
 end component;
+
+--SIGNALS
+signal Instruction_control_signal : STD_LOGIC_VECTOR(31 downto 0);
 			
 begin
 
-FSM: CONTROL_MultiCycle port map (  Instruction => Instruction_BYPASS_IF,
+FSM: CONTROL_MultiCycle port map (  Instruction => Instruction_control_signal,
                                     Control_Clk => CLK,
                                     Control_Reset => Reset,        
                                     PC_sel => PC_sel_signal,
@@ -117,17 +113,15 @@ Datapath: DATAPATH_MultiCycle port map ( Datapath_Clk => CLK,
                                          cloud_enable => cloud_enable_signal,
                                          ALU_func => ALU_func_signal,
                                          ALU_Bin_sel => ALU_Bin_sel_signal,
-                                         Mem_WrEn => Mem_WrEn_signal,
-                                         
-                                         --Instruction_BYPASS_IF => Instruction_signal,
-                                         Instruction_BYPASS_IF => Instruction_BYPASS_IF,
-                                               
+                                         Mem_WrEn => Mem_WrEn_signal,                                                                                 
                                          Instr_REG_WE => Instr_REG_WE_signal,
                                          RF_A_REG_WE => RF_A_REG_WE_signal,
                                          RF_B_REG_WE => RF_B_REG_WE_signal,      
                                          Immed_Reg_WE => Immed_Reg_WE_signal,
                                          ALU_out_Reg_WE => ALU_out_Reg_WE_signal,
-                                         MEM_Dataout_REG_WE => MEM_Dataout_REG_WE_signal
+                                         MEM_Dataout_REG_WE => MEM_Dataout_REG_WE_signal,
+                                         
+                                         Instruction_control => Instruction_control_signal
                                        );                                
 
 end Structural;

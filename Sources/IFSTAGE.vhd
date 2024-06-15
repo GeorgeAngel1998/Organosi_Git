@@ -11,13 +11,7 @@ entity IFSTAGE is
        PC_LdEn      : in  STD_LOGIC;
        Reset        : in  STD_LOGIC;
        Clk          : in  STD_LOGIC;
-       Instr        : out  STD_LOGIC_VECTOR (31 downto 0);
-       
-              -- Testing
-      memIn        : out  STD_LOGIC_VECTOR (31 downto 0); 
-      muxOut       : out  STD_LOGIC_VECTOR (31 downto 0); 
-      muxA         : out  STD_LOGIC_VECTOR (31 downto 0);
-      muxB         : out  STD_LOGIC_VECTOR (31 downto 0)
+       Instr        : out  STD_LOGIC_VECTOR (31 downto 0)      
        );       
 end IFSTAGE;
 
@@ -90,9 +84,5 @@ begin
        end process;		
     	
     Instr   <= memory_out_signal;
-    memIn   <= register_out_signal;
-    muxOut  <= MUX_output_signal;
-    muxA    <= MUX_input_A_signal;
-    muxB    <= MUX_input_B_signal;
 
 end Behavioral;

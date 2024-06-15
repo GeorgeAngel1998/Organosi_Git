@@ -4,6 +4,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity MEM_STAGE is
     Port ( clk : in STD_LOGIC;
            Mem_WrEn : in STD_LOGIC;
+           --Mem_RdEn : in STD_LOGIC;
            ALU_MEM_Addr : in STD_LOGIC_VECTOR (31 downto 0);
            MEM_DataIn : in STD_LOGIC_VECTOR (31 downto 0);
            MEM_DataOut : out STD_LOGIC_VECTOR (31 downto 0));
@@ -22,10 +23,12 @@ Component dist_mem_gen_1 IS
 END component;
 
 signal WREN_SIGNAL : STD_LOGIC;
+--signal RDEN_SIGNAL : STD_LOGIC;
 
 begin
 
 WREN_SIGNAL <= '1' when Mem_WrEn = '1' else '0';
+--RDEN_SIGNAL <= '1' when Mem_RdEn = '1' else '0';
 
 MEM : dist_mem_gen_1 port map ( a => ALU_MEM_Addr(11 downto 2),
                                 d => MEM_DataIn,
