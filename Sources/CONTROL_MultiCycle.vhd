@@ -27,8 +27,7 @@ end CONTROL_MultiCycle;
 architecture Behavioral of CONTROL_MultiCycle is
 
 type state is(S0_Reset, S1_Fetch, S2_Decode, S3_Execute_Li_Lui, S4_Execute_ALU, S5_WriteBack_ALU, S6_Execute_Addi, S7_Execute_Andi, S8_Execute_Ori,
-S9_Execute_B, S10_Execute_Beq, S11_Execute_Bne, S12_Execute_MEM, S13_Execute_Lb, S14_Execute_Sb, S15_Execute_Lw, S16_Execute_Sw, S17_WriteBack_MEM,
-S18_MEM_Reset);
+S9_Execute_B, S10_Execute_Beq, S11_Execute_Bne, S12_Execute_MEM, S13_WriteBack_MEM, S14_MEM_Reset, STALL_State);
 --Signals
 SIGNAL current_State ,next_State: state;
 
@@ -242,50 +241,45 @@ case current_State is
 		 ALU_out_Reg_WE <='1';        -- We hold the value
 		 Alu_Bin_Sel <='1';           -- We have Immed
 		 ALU_func <= "0000";          -- Add
-         if Instruction(31 downto 26) = "000011" then -- lb              
-            next_State <= S13_Execute_Lb;                        
-         elsif Instruction(31 downto 26) = "000111" then -- sb           
-            next_State <= S14_Execute_Sb;                             
-         elsif Instruction(31 downto 26) = "001111" then -- lw           
-            next_State <= S15_Execute_Lw;                         
+		 
+         if Instruction(31 downto 26) = "000011" then -- lb        
+            Mem_WrEn <= "001";  -- We don't write to the MEM
+            MEM_Dataout_REG_WE <= '1';   -- We hold the value              
+            next_State <= S13_WriteBack_MEM;
+                                    
+         elsif Instruction(31 downto 26) = "000111" then -- sb
+            Mem_WrEn <= "010";  -- We write to the MEM
+            MEM_Dataout_REG_WE <= '1';   -- We hold the value
+            next_State <= S14_MEM_Reset;  
+                                       
+         elsif Instruction(31 downto 26) = "001111" then -- lw
+            Mem_WrEn <= "011";  -- We don't write to the MEM
+            MEM_Dataout_REG_WE <= '1';   -- We hold the value
+            next_State <= S13_WriteBack_MEM;
+                                     
          elsif Instruction(31 downto 26) = "011111" then -- sw           
-            next_State <= S16_Execute_Sw;
+            Mem_WrEn <= "100";  -- We write to the MEM
+            MEM_Dataout_REG_WE <= '1';   -- We hold the value
+            next_State <= S14_MEM_Reset;
+            
          end if;
-                   
-    when S13_Execute_Lb =>         
-         Mem_WrEn <= "001";  -- We don't write to the MEM
-         MEM_Dataout_REG_WE <= '1';   -- We hold the value 
-         next_State <= S17_WriteBack_MEM;
-       
-    when S14_Execute_Sb =>
-         Mem_WrEn <= "010";  -- We write to the MEM
-         MEM_Dataout_REG_WE <= '1';   -- We hold the value
-         next_State <= S18_MEM_Reset;
-       
-    when S15_Execute_Lw =>
-         Mem_WrEn <= "011";  -- We don't write to the MEM
-         MEM_Dataout_REG_WE <= '1';   -- We hold the value
-         next_State <= S17_WriteBack_MEM;
             
-    when S16_Execute_Sw =>
-         Mem_WrEn <= "100";  -- We write to the MEM
-         MEM_Dataout_REG_WE <= '1';   -- We hold the value
-         next_State <= S18_MEM_Reset;
-            
-    when S17_WriteBack_MEM =>
+    when S13_WriteBack_MEM =>
          
          RF_WrData_sel <= '1';        -- We want from MEM_out
 	     RF_WrEn <= '1';              -- We write to the reg 
 		 Immed_Reg_WE <= '0';         -- We dont hold the value		 
 		 next_State <= S1_Fetch; 
 		    
-	when S18_MEM_Reset =>
+	when S14_MEM_Reset =>
 	     
          Mem_WrEn <= "000";           -- Memory reset     
 		 next_State <= S1_Fetch;
+		 
+    when STALL_State =>         
+         next_State <= S1_Fetch;
     
-    when others =>
-         
+    when others =>         
          next_State <= S0_Reset;
 		    	                 
 end case;
