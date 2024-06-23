@@ -23,7 +23,7 @@ SIGNAL RF_B_sel_signal :   STD_LOGIC;
 SIGNAL cloud_enable_signal :  STD_LOGIC_VECTOR(1 downto 0);
 SIGNAL ALU_func_signal :  STD_LOGIC_VECTOR(3 downto 0);
 SIGNAL ALU_Bin_sel_signal :  STD_LOGIC;       
-SIGNAL Mem_WrEn_signal :  STD_LOGIC;       
+SIGNAL Mem_WrEn_signal :  STD_LOGIC_VECTOR(2 downto 0);       
 SIGNAL Instr_REG_WE_signal : STD_LOGIC;
 SIGNAL RF_A_REG_WE_signal : STD_LOGIC;
 SIGNAL RF_B_REG_WE_signal : STD_LOGIC;      
@@ -44,7 +44,7 @@ component CONTROL_MultiCycle is
            cloud_enable : out STD_LOGIC_VECTOR(1 downto 0);
            ALU_func : out STD_LOGIC_VECTOR(3 downto 0);
            ALU_Bin_sel : out STD_LOGIC;       
-           Mem_WrEn : out STD_LOGIC;        
+           Mem_WrEn : out STD_LOGIC_VECTOR(2 downto 0);        
            Instr_REG_WE : out STD_LOGIC;
            RF_A_REG_WE : out STD_LOGIC;
            RF_B_REG_WE : out STD_LOGIC;      
@@ -65,7 +65,7 @@ component DATAPATH_MultiCycle is
          cloud_enable : in STD_LOGIC_VECTOR(1 downto 0);
          ALU_func : in STD_LOGIC_VECTOR(3 downto 0);
          ALU_Bin_sel : in STD_LOGIC;       
-         Mem_WrEn : in STD_LOGIC;
+         Mem_WrEn : in STD_LOGIC_VECTOR(2 downto 0);
          
          Instr_REG_WE : in STD_LOGIC;
          RF_A_REG_WE : in STD_LOGIC;

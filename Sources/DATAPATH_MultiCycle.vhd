@@ -12,8 +12,7 @@ entity DATAPATH_MultiCycle is
          cloud_enable : in STD_LOGIC_VECTOR(1 downto 0);
          ALU_func : in STD_LOGIC_VECTOR(3 downto 0);
          ALU_Bin_sel : in STD_LOGIC;       
-         Mem_WrEn : in STD_LOGIC;
-         --Instruction_BYPASS_IF : in STD_LOGIC_VECTOR(31 downto 0);
+         Mem_WrEn : in STD_LOGIC_VECTOR(2 downto 0);
          
          Instr_REG_WE : in STD_LOGIC;
          RF_A_REG_WE : in STD_LOGIC;
@@ -67,7 +66,7 @@ end component;
 
 component MEM_STAGE is
     Port ( clk : in STD_LOGIC;
-           Mem_WrEn : in STD_LOGIC;
+           Mem_WrEn : in STD_LOGIC_VECTOR(2 downto 0);
            ALU_MEM_Addr : in STD_LOGIC_VECTOR (31 downto 0);
            MEM_DataIn : in STD_LOGIC_VECTOR (31 downto 0);
            MEM_DataOut : out STD_LOGIC_VECTOR (31 downto 0));
